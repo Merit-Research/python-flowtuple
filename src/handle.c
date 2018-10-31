@@ -25,16 +25,17 @@ static PyObject *pyflowtuple_handle_from_obj(void *data) {
 PyObject *pyflowtuple_handle_new(PyTypeObject *subtype, PyObject *args, PyObject *kwargs) {
     char *uri;
     flowtuple_handle_t *h;
+    flowtuple_errno_t ft_errno;
 
     if (!PyArg_ParseTuple(args, "s", &uri)) {
         return NULL;
     }
 
-    h = flowtuple_initialize(uri);
+    h = flowtuple_initialize(uri, &ft_errno);
     if (h != NULL) {
         return pyflowtuple_handle_from_obj(h);
     } else {
-        PyObject *error_obj = Py_BuildValue("(siO)", "unable to create flowtuple handle", 0, Py_None);
+        PyObject *error_obj = Py_BuildValue("(siO)", flowtuple_strerr(ft_errno), ft_errno, Py_None);
         Py_INCREF(Py_None);
         PyErr_SetObject(flowtuple_error, error_obj);
         return NULL;

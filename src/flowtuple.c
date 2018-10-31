@@ -13,6 +13,15 @@ static PyMethodDef methods[] = {
     { NULL, NULL, 0, NULL },
 };
 
+static void init_pyflowtuple_error(PyObject *module) {
+    flowtuple_error = PyErr_NewExceptionWithDoc("flowtuple.error",
+        "Exception raised when an error occurs within libflowtuple",
+        NULL, NULL);
+    PyModule_AddObject(module, "error", flowtuple_error);
+    Py_INCREF(flowtuple_error);
+
+}
+
 static struct PyModuleDef flowtuple_def = {
     PyModuleDef_HEAD_INIT,
     "flowtuple",
@@ -25,6 +34,7 @@ static struct PyModuleDef flowtuple_def = {
 PyMODINIT_FUNC PyInit_flowtuple(void) {
     PyObject *m = PyModule_Create(&flowtuple_def);
 
+    init_pyflowtuple_error(m);
     init_pyflowtuple_handle(m);
     init_pyflowtuple_header(m);
     init_pyflowtuple_trailer(m);
