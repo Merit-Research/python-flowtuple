@@ -27,12 +27,11 @@ static void pyflowtuple_data_dealloc(PyObject *obj) {
     Py_TYPE(obj)->tp_free(obj);
 }
 
-static PyObject *pyflowtuple_data_get_class_start(PyObject *self, void *closure) {
+static PyObject *pyflowtuple_data_get_class_type(PyObject *self, void *closure) {
     flowtuple_data_t *d = DATA_OBJ(self);
-    void *data;
-
-    data = (void*)flowtuple_data_get_class_start(d);
-    return pyflowtuple_class_from_rec(data);
+    flowtuple_class_t *c = flowtuple_data_get_class_start(d);
+    uint16_t ret = flowtuple_class_get_class_type(c);
+    return PyLong_FromUnsignedLong(ret);
 }
 
 static PyObject *pyflowtuple_data_get_number(PyObject *self, void *closure) {
@@ -116,8 +115,8 @@ static PyObject *pyflowtuple_data_is_slash_eight(PyObject *self, PyObject *args)
 }
 
 static struct PyGetSetDef pyflowtuple_data_getset[] = {
-    { "class_start",
-      (getter)pyflowtuple_data_get_class_start,
+    { "class_type",
+      (getter)pyflowtuple_data_get_class_type,
       NULL,
       "class object related to data object", NULL },
     { "number",
