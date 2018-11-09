@@ -1,0 +1,21 @@
+python-flowtuple
+================
+
+python-flowtuple is a python module to gain access to libflowtuple from Python
+3.
+
+In order to use this module, you will need:
+
+  * Python 3.x
+  * libflowtuple
+
+Installation
+============
+
+To install, you will need to run the following:
+
+    $ git clone https://github.com/Merit-Research/python-flowtuple.git
+    $ cd python-flowtuple
+    $ python3 setup.py build
+    # python3 setup.py install
+
