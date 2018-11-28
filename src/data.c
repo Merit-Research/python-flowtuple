@@ -68,16 +68,7 @@ static PyObject *pyflowtuple_data_get_src_ip(PyObject *self, void *closure) {
 
 static PyObject *pyflowtuple_data_get_dest_ip(PyObject *self, void *closure) {
     flowtuple_data_t *d = DATA_OBJ(self);
-    uint32_t ret;
-    flowtuple_slash_eight_t se;
-
-    if (flowtuple_data_is_slash_eight(d)) {
-        se = flowtuple_data_get_dest_ip_slash_eight(d);
-        ret = 0 | (se.b << 16) | (se.c << 8) | se.d;
-    } else {
-        ret = flowtuple_data_get_dest_ip_int(d);
-    }
-
+    uint32_t ret = flowtuple_data_get_dest_ip(d);
     return PyLong_FromUnsignedLong(ret);
 }
 
