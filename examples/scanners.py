@@ -1,4 +1,5 @@
 import argparse
+from socket import ntohs, ntohl
 
 import flowtuple
 
@@ -43,14 +44,14 @@ def housekeeping(tracker, current_ts, inter, key):
 
 
 def process_data(scanners, data, tracker, ts, inter):
-    if data.protocol == 1 and data.src_port != 8:
+    if data.protocol == 1 and ntohs(data.src_port) != 8:
         return
 
     if data.protocol == 1:
         port = 0
     else:
-        port = data.dest_port
-    key = (data.src_ip, port, data.protocol,)
+        port = ntohs(data.dest_port)
+    key = (ntohl(data.src_ip), port, data.protocol,)
 
     if key in scanners:
         return
@@ -59,9 +60,9 @@ def process_data(scanners, data, tracker, ts, inter):
         tracker[key] = {}
 
     if data.dest_ip not in tracker[key]:
-        tracker[key][data.dest_ip] = [ts]
+        tracker[key][ntohl(data.dest_ip)] = [ts]
     else:
-        tracker[key][data.dest_ip].append(ts)
+        tracker[key][ntohl(data.dest_ip)].append(ts)
 
     housekeeping(tracker, ts + 60, inter, key)
 
@@ -111,11 +112,11 @@ if __name__ == "__main__":
         record = handle.get_next()
         while record is not None:
             if isinstance(record, flowtuple.Interval):
-                if record.time < current_inter_ts:
+                if ntohl(record.time) < current_inter_ts:
                     print("Files not in order... Aborting...")
                     exit(2)
                 else:
-                    current_inter_ts = record.time
+                    current_inter_ts = ntohl(record.time)
 
             elif isinstance(record, flowtuple.Data):
                 if record.protocol == 1 or record.protocol == 6 or record.protocol == 17:
